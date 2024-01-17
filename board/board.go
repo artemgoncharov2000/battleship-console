@@ -9,13 +9,24 @@ import (
 
 type Board struct{
 	ocean [10][10]ships.Ship
+	TotalShips int
+	SunkenShips int
 }
 
-func (board Board) Print() {
-	for _, row := range board.ocean {
+func (board Board) Print(hideShips bool) {
+	
+	for i, row := range board.ocean {
 		str := ""
-		for _, item := range row {
-			str += item.GetString()
+		for j, item := range row {
+			if item.IsHit(i, j) {
+				if !item.IsOcean {
+					str += "x"
+				} else {
+					str += "+"
+				}
+			} else {
+				str += item.GetString(hideShips)
+			}
 		}
 		fmt.Println(str)
 	}
@@ -32,6 +43,8 @@ func Create() Board {
 
 	return Board{
 		ocean: ocean,
+		TotalShips: 10,
+		SunkenShips: 0,
 	}
 }
 
@@ -105,4 +118,22 @@ func (board Board) canPlaceShip(ship *ships.Ship) bool {
 	}
 
 	return true
+}
+
+func (board *Board) ShootAt(row, column int) bool {
+	damagedOrSunk := board.ocean[row][column].ShootAt(row, column)
+	if  damagedOrSunk && board.ocean[row][column].IsSunk() {
+		board.TotalShips -= 1
+		board.SunkenShips += 1
+	}
+
+	return damagedOrSunk
+}
+
+func (board Board) IsAllShipsSunk() bool {
+	return board.TotalShips == 0
+} 
+
+func (board Board) IsDamaged(row, column int) bool {
+	return board.ocean[row][column].IsHit(row, column)
 }

@@ -1,10 +1,9 @@
 package main
 
-import "github.com/artemgoncharov2000/battleship-console/board"
+import "github.com/artemgoncharov2000/battleship-console/game"
 
 
 func main() {
-	playerBoard := board.Create()
-	playerBoard.PlaceShipsRandomly()
-	playerBoard.Print()
+	game := game.Create()
+	game.Start()
 }
