@@ -3,7 +3,6 @@ package ships
 const (
 	Carrier    = "Carrier"
 	Battleship = "Battleship"
-	Cruiser    = "Cruiser"
 	Submarine  = "Submarine"
 	Destroyer  = "Destroyer"
 	Ocean      = "Ocean"
@@ -35,11 +34,11 @@ func CreateCarrier(bowRow, bowColumn int, isHorizonal bool) Ship {
 	return Ship{
 		BowRow:       bowRow,
 		BowColumn:    bowColumn,
-		Size:         5,
+		Size:         4,
 		Name:         Carrier,
 		IsHorizontal: isHorizonal,
 		IsOcean:      false,
-		Hit:          make([]bool, 5),
+		Hit:          make([]bool, 4),
 	}
 }
 
@@ -47,20 +46,8 @@ func CreateBattleship(bowRow, bowColumn int, isHorizonal bool) Ship {
 	return Ship{
 		BowRow:       bowRow,
 		BowColumn:    bowColumn,
-		Size:         4,
-		Name:         Battleship,
-		IsHorizontal: isHorizonal,
-		IsOcean:      false,
-		Hit:          make([]bool, 4),
-	}
-}
-
-func CreateCruiser(bowRow, bowColumn int, isHorizonal bool) Ship {
-	return Ship{
-		BowRow:       bowRow,
-		BowColumn:    bowColumn,
 		Size:         3,
-		Name:         Cruiser,
+		Name:         Battleship,
 		IsHorizontal: isHorizonal,
 		IsOcean:      false,
 		Hit:          make([]bool, 3),
@@ -71,11 +58,11 @@ func CreateSubmarine(bowRow, bowColumn int, isHorizonal bool) Ship {
 	return Ship{
 		BowRow:       bowRow,
 		BowColumn:    bowColumn,
-		Size:         3,
+		Size:         2,
 		Name:         Submarine,
 		IsHorizontal: isHorizonal,
 		IsOcean:      false,
-		Hit:          make([]bool, 3),
+		Hit:          make([]bool, 2),
 	}
 }
 
@@ -83,11 +70,11 @@ func CreateDestroyer(bowRow, bowColumn int, isHorizonal bool) Ship {
 	return Ship{
 		BowRow:       bowRow,
 		BowColumn:    bowColumn,
-		Size:         2,
+		Size:         1,
 		Name:         Destroyer,
 		IsHorizontal: isHorizonal,
 		IsOcean:      false,
-		Hit:          make([]bool, 2),
+		Hit:          make([]bool, 1),
 	}
 }
 

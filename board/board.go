@@ -42,11 +42,8 @@ func (board *Board) PlaceShipsRandomly() {
 	// Battleships
 	board.createShips(ships.CreateBattleship, 2)
 
-	// Cruiser
-	board.createShips(ships.CreateCruiser, 2)
-
 	// Submarine
-	board.createShips(ships.CreateSubmarine, 1)
+	board.createShips(ships.CreateSubmarine, 3)
 
 	// Destroyer
 	board.createShips(ships.CreateDestroyer, 4)
@@ -61,7 +58,7 @@ func (board *Board) createShips(createFn func(bowRow, bowColumn int, isHorizonal
 			column := rand.Intn(10)
 			horizontal := rand.Intn(2) == 1
 	
-			ship := ships.CreateCarrier(row, column, horizontal)
+			ship := createFn(row, column, horizontal)
 			
 			if board.canPlaceShip(&ship) {
 				board.placeShip(&ship)
@@ -85,22 +82,23 @@ func (board *Board) placeShip(ship *ships.Ship) {
 
 func (board Board) canPlaceShip(ship *ships.Ship) bool {
 	if ship.IsHorizontal {
-		if ship.BowColumn + ship.Size > 9 {
+		if ship.BowColumn + ship.Size - 1 > 9 {
 			return false
 		}
+		
+		for i := max(ship.BowColumn - 1, 0); i < min(ship.BowColumn + ship.Size + 1, 10); i++ {
 
-		for i := ship.BowColumn; i < ship.BowColumn + ship.Size; i++ {
-			if board.ocean[ship.BowRow][i].IsOccupied() {
+			if board.ocean[min(ship.BowRow + 1, 9)][i].IsOccupied() || board.ocean[max(ship.BowRow - 1, 0)][i].IsOccupied() || board.ocean[ship.BowRow][i].IsOccupied() {
 				return false
 			}
 		}
 	} else {
-		if ship.BowRow + ship.Size > 9 {
+		if ship.BowRow + ship.Size - 1 > 9 {
 			return false
 		}
 
-		for i := ship.BowRow; i < ship.BowRow + ship.Size; i++ {
-			if board.ocean[i][ship.BowColumn].IsOccupied() {
+		for i := max(ship.BowRow - 1, 0); i < min(ship.BowRow + ship.Size + 1, 10); i++ {
+			if board.ocean[i][min(ship.BowColumn + 1, 9)].IsOccupied() || board.ocean[i][max(ship.BowColumn - 1, 0)].IsOccupied() || board.ocean[i][ship.BowColumn].IsOccupied() {
 				return false
 			}
 		}
