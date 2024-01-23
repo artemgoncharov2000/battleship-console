@@ -1,18 +1,21 @@
 package game
 
 import (
-
+	"bufio"
 	"fmt"
 	"math/rand"
-
+	"os"
+	"os/exec"
+	"strconv"
+	"strings"
 
 	"github.com/artemgoncharov2000/battleship-console/board"
 )
 
-type Game struct{
+type Game struct {
 	playerBoard board.Board
-	enemyBoard board.Board
-	nextMove string
+	enemyBoard  board.Board
+	nextMove    string
 }
 
 func Create() Game {
@@ -22,11 +25,10 @@ func Create() Game {
 	enemyBoard := board.Create()
 	enemyBoard.PlaceShipsRandomly()
 
-
 	return Game{
 		playerBoard: playerBoard,
-		enemyBoard: enemyBoard,
-		nextMove: "player",
+		enemyBoard:  enemyBoard,
+		nextMove:    "player",
 	}
 }
 
@@ -42,22 +44,29 @@ func (game *Game) Start() {
 
 		if game.nextMove == "player" {
 			fmt.Println("Your move")
-			fmt.Println("Enter row: ")
+			fmt.Print("Enter row, column: ")
 
-			var row int
-			_, err := fmt.Scanf("%d", &row)
+			reader := bufio.NewReader(os.Stdin)
+			input, err := reader.ReadString('\n')
 
 			if err != nil {
 				fmt.Println(err)
 				continue
 			}
-			fmt.Println("Enter column: ")
 			
-			var column int
-			_, err = fmt.Scanf("%d", &column)
+			splittedInput := strings.Split(strings.Replace(input, "\n", "", -1), ", ")
+			fmt.Println(splittedInput)
+			row, err := strconv.Atoi(splittedInput[0])
 
 			if err != nil {
-				fmt.Println("Wrong value of column")
+				fmt.Println("Wrong value of row", err)
+				continue
+			}
+
+			column, err := strconv.Atoi(splittedInput[1])
+
+			if err != nil {
+				fmt.Println("Wrong value of column", err)
 				continue
 			}
 
@@ -75,12 +84,17 @@ func (game *Game) Start() {
 				row = rand.Intn(10)
 				column = rand.Intn(10)
 			}
-			
+
 			game.playerBoard.ShootAt(row, column)
 
 			game.nextMove = "player"
 		}
 
+		clearConsole()
+
+		fmt.Println("Enemy stats")
+		fmt.Println("Total ships", game.enemyBoard.TotalShips)
+		fmt.Println("Sunken ships", game.enemyBoard.SunkenShips)
 	}
 
 	fmt.Println("Game is over")
@@ -90,4 +104,10 @@ func (game *Game) Start() {
 	} else {
 		fmt.Println("You lose(")
 	}
+}
+
+func clearConsole() {
+	c := exec.Command("clear")
+	c.Stdout = os.Stdout
+	c.Run()
 }

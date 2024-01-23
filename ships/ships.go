@@ -20,10 +20,10 @@ type Ship struct {
 
 func (ship Ship) GetString(hideShips bool) string {
 	if ship.IsOcean || hideShips {
-		return "~"
+		return "  "
 	}
 
-	return "*"
+	return " ■"
 }
 
 func (ship Ship) IsOccupied() bool {
@@ -92,15 +92,15 @@ func CreateOcean(bowRow, bowColumn int) Ship {
 
 func (ship *Ship) ShootAt(row, column int) bool {
 	if ship.IsHorizontal {
-		if !ship.Hit[column - ship.BowColumn] {
-			ship.Hit[column - ship.BowColumn] = true
+		if !ship.Hit[column-ship.BowColumn] {
+			ship.Hit[column-ship.BowColumn] = true
 			return true
 		} else {
 			return false
 		}
 	} else {
-		if !ship.Hit[row - ship.BowRow] {
-			ship.Hit[row - ship.BowRow] = true
+		if !ship.Hit[row-ship.BowRow] {
+			ship.Hit[row-ship.BowRow] = true
 			return true
 		} else {
 			return false
@@ -110,10 +110,10 @@ func (ship *Ship) ShootAt(row, column int) bool {
 
 func (ship Ship) IsHit(row, column int) bool {
 	if ship.IsHorizontal {
-		return ship.Hit[column - ship.BowColumn]
+		return ship.Hit[column-ship.BowColumn]
 	}
 
-    return ship.Hit[row - ship.BowRow];
+	return ship.Hit[row-ship.BowRow]
 }
 
 func (ship Ship) IsSunk() bool {
