@@ -37,8 +37,8 @@ func (game *Game) Start() {
 	fmt.Println("Game is started!!!")
 	fmt.Print()
 
-	for !game.enemyBoard.IsAllShipsSunk() || !game.playerBoard.IsAllShipsSunk() {
-		game.enemyBoard.Print(true)
+	for !game.enemyBoard.IsAllShipsSunk() && !game.playerBoard.IsAllShipsSunk() {
+		game.enemyBoard.Print(false)
 		fmt.Println()
 		game.playerBoard.Print(false)
 
