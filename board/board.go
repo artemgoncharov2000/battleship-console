@@ -49,8 +49,6 @@ func Create() Board {
 
 	return Board{
 		ocean:       ocean,
-		TotalShips:  10,
-		SunkenShips: 0,
 	}
 }
 
@@ -81,6 +79,7 @@ func (board *Board) createShips(createFn func(bowRow, bowColumn int, isHorizonal
 
 			if board.canPlaceShip(&ship) {
 				board.placeShip(&ship)
+				board.TotalShips += 1
 				flag = true
 			}
 		}

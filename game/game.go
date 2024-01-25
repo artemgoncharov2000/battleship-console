@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/artemgoncharov2000/battleship-console/board"
+	"github.com/artemgoncharov2000/battleship-console/ships"
 )
 
 type Game struct {
@@ -35,7 +36,7 @@ func Create() Game {
 func (game *Game) Start() {
 
 	fmt.Println("Game is started!!!")
-	fmt.Print()
+	game.placePlayerShips()
 
 	for !game.enemyBoard.IsAllShipsSunk() && !game.playerBoard.IsAllShipsSunk() {
 		game.enemyBoard.Print(false)
@@ -53,7 +54,7 @@ func (game *Game) Start() {
 				fmt.Println(err)
 				continue
 			}
-			
+
 			splittedInput := strings.Split(strings.Replace(input, "\n", "", -1), ", ")
 			fmt.Println(splittedInput)
 			row, err := strconv.Atoi(splittedInput[0])
@@ -104,6 +105,34 @@ func (game *Game) Start() {
 	} else {
 		fmt.Println("You lose(")
 	}
+}
+
+func (game *Game) placePlayerShips() {
+
+	shipsMapCount := map[string]int{
+		ships.Carrier:    1,
+		ships.Battleship: 2,
+		ships.Submarine:  3,
+		ships.Destroyer:  4,
+	}
+
+	// for totalShipToPlace > 0 {
+
+	// }
+	printShipsToPlace(shipsMapCount)
+
+	fmt.Println("Choose option to place")
+}
+
+func printShipsToPlace(shipsMapCount map[string]int) {
+	fmt.Printf("------------------------------\n")
+	fmt.Printf("Piece          | Size | Amount\n")
+	fmt.Printf("------------------------------\n")
+	fmt.Printf("Destroyer      | 1    | %v\n", shipsMapCount[ships.Destroyer])
+	fmt.Printf("Submarine      | 2    | %v\n", shipsMapCount[ships.Submarine])
+	fmt.Printf("Battleship     | 3    | %v\n", shipsMapCount[ships.Battleship])
+	fmt.Printf("Carrier        | 4    | %v\n", shipsMapCount[ships.Carrier])
+
 }
 
 func clearConsole() {
