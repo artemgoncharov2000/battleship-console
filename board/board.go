@@ -130,11 +130,28 @@ func (board *Board) ShootAt(row, column int) bool {
 	damagedOrSunk := board.ocean[row][column].ShootAt(row, column)
 	ship := &board.ocean[row][column]
 	if damagedOrSunk && !ship.IsOcean && ship.IsSunk() {
+		board.shootAreaAroundSunkShip(*ship)
 		board.TotalShips -= 1
 		board.SunkenShips += 1
 	}
 
 	return damagedOrSunk
+}
+
+func (boad *Board) shootAreaAroundSunkShip(ship ships.Ship) {
+	if ship.IsHorizontal {
+		for i := max(0, ship.BowColumn-1); i <= min(ship.BowColumn+ship.Size, 9); i++ {
+			for j := max(0, ship.BowRow-1); j <= min(ship.BowRow+1, 9); j++ {
+				boad.ocean[j][i].ShootAt(j, i)
+			}
+		}
+	} else {
+		for i := max(0, ship.BowRow-1); i <= min(ship.BowRow+ship.Size, 9); i++ {
+			for j := max(0, ship.BowColumn-1); j <= min(ship.BowColumn+1, 9); j++ {
+				boad.ocean[i][j].ShootAt(i, j)
+			}
+		}
+	}
 }
 
 func (board Board) IsAllShipsSunk() bool {
