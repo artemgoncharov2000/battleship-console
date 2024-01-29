@@ -77,8 +77,8 @@ func (board *Board) createShips(createFn func(bowRow, bowColumn int, isHorizonal
 
 			ship := createFn(row, column, horizontal)
 
-			if board.canPlaceShip(&ship) {
-				board.placeShip(&ship)
+			if board.CanPlaceShip(ship) {
+				board.PlaceShip(&ship)
 				board.TotalShips += 1
 				flag = true
 			}
@@ -86,7 +86,7 @@ func (board *Board) createShips(createFn func(bowRow, bowColumn int, isHorizonal
 	}
 }
 
-func (board *Board) placeShip(ship *ships.Ship) {
+func (board *Board) PlaceShip(ship *ships.Ship) {
 	if ship.IsHorizontal {
 		for i := ship.BowColumn; i < ship.BowColumn+ship.Size; i++ {
 			board.ocean[ship.BowRow][i] = *ship
@@ -98,7 +98,7 @@ func (board *Board) placeShip(ship *ships.Ship) {
 	}
 }
 
-func (board Board) canPlaceShip(ship *ships.Ship) bool {
+func (board Board) CanPlaceShip(ship ships.Ship) bool {
 	if ship.IsHorizontal {
 		if ship.BowColumn+ship.Size-1 > 9 {
 			return false
