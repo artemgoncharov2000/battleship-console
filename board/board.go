@@ -48,7 +48,7 @@ func Create() Board {
 	}
 
 	return Board{
-		ocean:       ocean,
+		ocean: ocean,
 	}
 }
 
@@ -79,7 +79,6 @@ func (board *Board) createShips(createFn func(bowRow, bowColumn int, isHorizonal
 
 			if board.CanPlaceShip(ship) {
 				board.PlaceShip(&ship)
-				board.TotalShips += 1
 				flag = true
 			}
 		}
@@ -96,6 +95,8 @@ func (board *Board) PlaceShip(ship *ships.Ship) {
 			board.ocean[i][ship.BowColumn] = *ship
 		}
 	}
+
+	board.TotalShips += 1
 }
 
 func (board Board) CanPlaceShip(ship ships.Ship) bool {
@@ -125,7 +126,7 @@ func (board Board) CanPlaceShip(ship ships.Ship) bool {
 	return true
 }
 
-func (board *Board) ShootAt(row, column int) bool {
+func (board *Board) ShootAt(row, column int) (bool, bool) {
 	damagedOrSunk := board.ocean[row][column].ShootAt(row, column)
 	ship := &board.ocean[row][column]
 	if damagedOrSunk && !ship.IsOcean && ship.IsSunk() {
@@ -134,7 +135,7 @@ func (board *Board) ShootAt(row, column int) bool {
 		board.SunkenShips += 1
 	}
 
-	return damagedOrSunk
+	return damagedOrSunk, ship.IsOcean
 }
 
 func (boad *Board) shootAreaAroundSunkShip(ship ships.Ship) {

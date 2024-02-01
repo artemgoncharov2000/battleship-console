@@ -34,12 +34,23 @@ func Create() Game {
 
 func (game *Game) Start() {
 	game.placePlayerShips()
+	clearConsole()
 	fmt.Println("Game is started!!!")
-
+	fmt.Println()
+	var errReason string = ""
 	for !game.enemyBoard.IsAllShipsSunk() && !game.playerBoard.IsAllShipsSunk() {
+
+		if errReason != "" {
+			fmt.Println(errReason)
+			errReason = ""
+		}
+
 		game.enemyBoard.Print(false)
 		fmt.Println()
 		game.playerBoard.Print(false)
+		fmt.Println("Enemy stats")
+		fmt.Println("Ships afloat", game.enemyBoard.TotalShips)
+		fmt.Println("Sunken ships", game.enemyBoard.SunkenShips)
 
 		if game.nextMove == "player" {
 			fmt.Println("Your move")
@@ -56,20 +67,28 @@ func (game *Game) Start() {
 			fmt.Println(splittedInput)
 			row, err := strconv.Atoi(splittedInput[0])
 
-			if err != nil {
-				fmt.Println("Wrong value of row", err)
+			if err != nil || row < 0 || row > 9 {
+				errReason = "Incorrect row input, row should be integer value in range [0..9]"
 				continue
 			}
 
 			column, err := strconv.Atoi(splittedInput[1])
 
 			if err != nil {
-				fmt.Println("Wrong value of column", err)
+				errReason = "Incorrect column input, column should be integer value in range [0..9]"
 				continue
 			}
 
-			if game.enemyBoard.ShootAt(row, column) {
+			damagedOrSunk, isOcean := game.enemyBoard.ShootAt(row, column)
+
+			if damagedOrSunk && !isOcean {
 				fmt.Println("Enemy's ship was damaged or sunk")
+				continue
+			}
+
+			if !damagedOrSunk {
+				errReason = "You have already shot at this point"
+				continue
 			}
 
 			game.nextMove = "enemy"
@@ -87,9 +106,8 @@ func (game *Game) Start() {
 
 			game.nextMove = "player"
 		}
-		fmt.Println("Enemy stats")
-		fmt.Println("Total ships", game.enemyBoard.TotalShips)
-		fmt.Println("Sunken ships", game.enemyBoard.SunkenShips)
+		
+		clearConsole()
 	}
 
 	fmt.Println("Game is over")
@@ -110,31 +128,40 @@ func (game *Game) placePlayerShips() {
 		ships.Destroyer:  4,
 	}
 
-	
+	var errReason string = ""
+
 	for totalShipsToPlace > 0 {
+
+		clearConsole()
+
+		if errReason != "" {
+			fmt.Println(errReason)
+			errReason = ""
+		}
+
 		game.playerBoard.Print(false)
 		fmt.Println("Choose option to place")
 		fmt.Println("Enter 1 to place ship manually")
 		fmt.Println("Enter 2 to place all ships randomly")
-
+		fmt.Print("Input: ")
 		input, err := getUserInput()
 
 		if err != nil {
-			fmt.Println("Incorrect input")
+			errReason = "Incorrect input"
 			continue
 		}
 
 		switch input {
-			case "1":
-				game.placePlayerShipManually(&shipsMapCount)
-				totalShipsToPlace -= 1
-				clearConsole()
-			case "2":
-				game.playerBoard.PlaceShipsRandomly()
-				return
-			default:
-				fmt.Println("Wrong command, try again")
-				continue
+		case "1":
+			game.placePlayerShipManually(&shipsMapCount)
+			totalShipsToPlace -= 1
+			clearConsole()
+		case "2":
+			game.playerBoard.PlaceShipsRandomly()
+			return
+		default:
+			errReason = "Wrong command, try again"
+			continue
 		}
 
 	}
@@ -142,55 +169,63 @@ func (game *Game) placePlayerShips() {
 }
 
 func (game *Game) placePlayerShipManually(shipsMapCount *map[string]int) {
+	var errReason string = ""
 	for {
+		clearConsole()
+
+		if errReason != "" {
+			fmt.Println(errReason)
+		}
+
 		game.playerBoard.Print(false)
-		fmt.Println("Enter (\"type, y, x, horizontal\") to place ship")
+		fmt.Println("Enter \"type, row, column, horizontal\" (ex. \"Destroyer, 5, 5, true\") to place ship")
 		printShipsToPlace(*shipsMapCount)
+		fmt.Print("Input: ")
 		input, err := getUserInput()
 
 		if err != nil {
-			fmt.Println("Incorrect input")
+			errReason = "Incorrect input"
 			continue
 		}
 
 		splittedInput := strings.Split(strings.Replace(input, "\n", "", -1), ", ")
 
 		if len(splittedInput) < 4 {
-			fmt.Print("Incorrect input, omitted arguments")
+			errReason = "Incorrect input, omitted arguments"
 			continue
 		}
 		fmt.Println(splittedInput)
 		shipType := splittedInput[0]
 		rowAsString := splittedInput[1]
 		columnAsString := splittedInput[2]
-		horizontal := splittedInput[3] 
+		horizontal := splittedInput[3]
 
 		if count, ok := (*shipsMapCount)[shipType]; !ok || count == 0 {
-			fmt.Println("Invalid ship type or all ships of this type have ended")
+			errReason = "Invalid ship type or all ships of this type have ended"
 			continue
 		}
 
 		row, err := strconv.Atoi(rowAsString)
 
-		if err != nil ||  row < 0 || row > 9 {
-			fmt.Println("Incorrect row input, row should be integer value in range [0..9]")
+		if err != nil || row < 0 || row > 9 {
+			errReason = "Incorrect row input, row should be integer value in range [0..9]"
 		}
 
 		column, err := strconv.Atoi(columnAsString)
 
-		if err != nil ||  column < 0 || column > 9 {
-			fmt.Println("Incorrect column input, column should be integer value in range [0..9]")
+		if err != nil || column < 0 || column > 9 {
+			errReason = "Incorrect column input, column should be integer value in range [0..9]"
 		}
 
 		if horizontal != "true" && horizontal != "false" {
-			fmt.Println("Incorrect horizontal input, horizonal should be true or false")
+			errReason = "Incorrect horizontal input, horizonal should be true or false"
 			continue
 		}
 
 		ship := createShip(shipType, row, column, horizontal == "true")
 
 		if !game.playerBoard.CanPlaceShip(ship) {
-			fmt.Println("Cannot place ship there, try another place")
+			errReason = "Cannot place ship there, try another place"
 			continue
 		}
 
