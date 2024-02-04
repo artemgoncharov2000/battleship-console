@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"strconv"
 
-	"github.com/artemgoncharov2000/battleship-console/ships"
+	"github.com/artemgoncharov2000/battleship-console/internal/ships"
 )
 
 type Board struct {

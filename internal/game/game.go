@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/artemgoncharov2000/battleship-console/board"
-	"github.com/artemgoncharov2000/battleship-console/ships"
+	"github.com/artemgoncharov2000/battleship-console/internal/board"
+	"github.com/artemgoncharov2000/battleship-console/internal/ships"
 )
 
 type Game struct {
