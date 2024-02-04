@@ -45,7 +45,7 @@ func (game *Game) Start() {
 			errReason = ""
 		}
 
-		game.enemyBoard.Print(false)
+		game.enemyBoard.Print(true)
 		fmt.Println()
 		game.playerBoard.Print(false)
 		fmt.Println("Enemy stats")
@@ -82,6 +82,7 @@ func (game *Game) Start() {
 			damagedOrSunk, isOcean := game.enemyBoard.ShootAt(row, column)
 
 			if damagedOrSunk && !isOcean {
+				clearConsole()
 				fmt.Println("Enemy's ship was damaged or sunk")
 				continue
 			}
